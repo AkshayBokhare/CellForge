@@ -25,7 +25,7 @@ function Toolbar({
   const handleFileChosen = (event) => {
     const file = event.target.files?.[0];
     if (file) onLoad(file);
-
+    // Reset so choosing the same file again still fires onChange.
     event.target.value = '';
   };
 

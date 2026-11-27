@@ -22,11 +22,11 @@ function Cell({
   const inputRef = useRef(null);
   const isEditing = editorValue !== undefined;
 
+  // Focus the input and put the cursor at the end when editing starts
   useEffect(() => {
     if (!isEditing || !inputRef.current) return;
     const input = inputRef.current;
     input.focus();
-
     input.setSelectionRange(input.value.length, input.value.length);
   }, [isEditing]);
 

@@ -26,6 +26,7 @@ function Grid({
     const result = results[id];
     const isEditingHere = editing?.id === id;
 
+    // While typing in the formula bar, show the draft in the cell as well
     const display =
       isEditingHere && editing.source === 'bar' ? editing.draft : formatResult(result);
 

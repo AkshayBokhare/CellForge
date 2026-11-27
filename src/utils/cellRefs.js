@@ -1,3 +1,4 @@
+// 0 -> A, 25 -> Z, 26 -> AA
 export function columnLabel(index) {
   let label = '';
   let n = index + 1;
@@ -9,6 +10,7 @@ export function columnLabel(index) {
   return label;
 }
 
+// Reverse of columnLabel, A -> 0
 export function columnIndex(label) {
   let n = 0;
   for (const char of label.toUpperCase()) {
@@ -21,12 +23,14 @@ export function cellId(row, col) {
   return `${columnLabel(col)}${row + 1}`;
 }
 
+// "B3" -> { row: 2, col: 1 }
 export function parseCellId(id) {
   const match = /^([A-Z]+)(\d+)$/i.exec(String(id).trim());
   if (!match) return null;
   return { row: parseInt(match[2], 10) - 1, col: columnIndex(match[1]) };
 }
 
+// Selection can be dragged in any direction, so sort it into top/left/bottom/right
 export function getRange(anchor, focus) {
   return {
     top: Math.min(anchor.row, focus.row),

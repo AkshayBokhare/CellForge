@@ -19,6 +19,7 @@ export function serializeSheet(sheet) {
   return JSON.stringify(data, null, 2);
 }
 
+// Downloads the JSON using a temporary link
 export function downloadSheet(sheet) {
   const blob = new Blob([serializeSheet(sheet)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
@@ -35,6 +36,7 @@ export function downloadSheet(sheet) {
   return fileName;
 }
 
+// Validates the loaded file and skips any bad cells instead of failing
 export function parseSheet(text) {
   let data;
   try {
@@ -91,6 +93,7 @@ function clampCount(value, max) {
   return Math.min(n, max);
 }
 
+// Remove characters that are not allowed in file names
 function toFileName(title) {
   const cleaned = String(title || '')
     .trim()

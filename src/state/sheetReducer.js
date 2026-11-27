@@ -21,6 +21,7 @@ function isEmptyCell(cell) {
   return !cell.value && !cell.bold && !cell.background;
 }
 
+// Only non-empty cells are stored, so the saved JSON stays small
 function writeCell(cells, id, changes) {
   const next = { value: '', bold: false, background: null, ...cells[id], ...changes };
   if (isEmptyCell(next)) {
@@ -30,6 +31,7 @@ function writeCell(cells, id, changes) {
   }
 }
 
+// Every change to the sheet data goes through here
 export function sheetReducer(state, action) {
   switch (action.type) {
     case 'SET_CELL_VALUE': {
@@ -61,6 +63,7 @@ export function sheetReducer(state, action) {
 
     case 'PASTE_BLOCK': {
       const { block, target, rowOffset = 0, colOffset = 0 } = action;
+      // Grow the grid if the pasted block goes past the edge
       const blockWidth = Math.max(...block.map((row) => row.length));
       const rowCount = Math.min(Math.max(state.rowCount, target.row + block.length), MAX_ROW_COUNT);
       const colCount = Math.min(Math.max(state.colCount, target.col + blockWidth), MAX_COLUMN_COUNT);

@@ -2,6 +2,8 @@
 
 A simple spreadsheet app made with React (Create React App).
 
+Live demo: https://cellforge-datastack.netlify.app/
+
 It starts with a 10x10 grid. You can add rows and columns, use SUM and AVERAGE formulas, make cells bold or give them a background colour, copy and paste cells, and save/load the sheet as a JSON file.
 
 ## Setup

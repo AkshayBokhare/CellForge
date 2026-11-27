@@ -1,5 +1,6 @@
 import { cellId, columnIndex, columnLabel, parseCellId } from './cellRefs';
 
+// Error type used to show codes like #REF! inside a cell
 export class FormulaError extends Error {
   constructor(code) {
     super(code);
@@ -7,6 +8,7 @@ export class FormulaError extends Error {
   }
 }
 
+// Supported functions, each one gets a flat list of numbers
 const FUNCTIONS = {
   SUM: (numbers) => numbers.reduce((total, n) => total + n, 0),
   AVERAGE: (numbers) => {
@@ -25,6 +27,7 @@ export function isFormula(raw) {
   return typeof raw === 'string' && raw.startsWith('=');
 }
 
+// Returns the number, or null for text and empty cells
 export function toNumber(value) {
   if (typeof value === 'number') return Number.isFinite(value) ? value : null;
   if (typeof value !== 'string' || value.trim() === '') return null;
@@ -32,6 +35,7 @@ export function toNumber(value) {
   return Number.isFinite(n) ? n : null;
 }
 
+// A1 or $B$2 -> { row, col }, throws #REF! if it is outside the grid
 function parseReference(text, ctx) {
   const position = parseCellId(text.replace(/\$/g, ''));
   const outOfBounds =
@@ -45,6 +49,7 @@ function parseReference(text, ctx) {
   return position;
 }
 
+// Split on commas, but skip the ones inside nested brackets
 function splitArguments(text) {
   const args = [];
   let depth = 0;
@@ -68,6 +73,7 @@ function splitArguments(text) {
   return args.map((arg) => arg.trim()).filter((arg) => arg !== '');
 }
 
+// One argument can be a nested call, a range, a single cell or a plain number
 function collectNumbers(arg, ctx, numbers) {
   if (arg.toUpperCase().includes('#REF!')) throw new FormulaError('#REF!');
 
@@ -108,6 +114,7 @@ function collectNumbers(arg, ctx, numbers) {
   numbers.push(literal);
 }
 
+// Evaluates everything after the "=" sign
 function evaluateExpression(expression, ctx) {
   const text = expression.trim();
   if (text === '') return '';
@@ -135,6 +142,7 @@ function evaluateExpression(expression, ctx) {
   throw new FormulaError('#NAME?');
 }
 
+// Calculates all cells, caches each result and catches circular refs
 export function evaluateSheet(cells, bounds) {
   const results = {};
   const inProgress = new Set();
@@ -148,6 +156,7 @@ export function evaluateSheet(cells, bounds) {
       return raw;
     }
 
+    // Already being calculated higher up, so the formula points back to itself
     if (inProgress.has(id)) return new FormulaError('#CIRC!');
 
     inProgress.add(id);
@@ -173,16 +182,18 @@ export function evaluateSheet(cells, bounds) {
   return results;
 }
 
+// Text that is shown in the cell
 export function formatResult(result) {
   if (result instanceof FormulaError) return result.code;
   if (typeof result === 'number') {
     if (!Number.isFinite(result)) return '#NUM!';
-
+    // Round off floating point noise, e.g. 0.1 + 0.2.
     return String(parseFloat(result.toFixed(10)));
   }
   return result ?? '';
 }
 
+// Moves refs by the paste offset, anything with $ stays fixed
 export function shiftFormula(raw, rowOffset, colOffset) {
   if (!isFormula(raw) || (rowOffset === 0 && colOffset === 0)) return raw;
 

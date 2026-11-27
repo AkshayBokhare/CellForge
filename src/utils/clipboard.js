@@ -1,6 +1,7 @@
 import { cellId } from './cellRefs';
 import { formatResult } from './formulaEngine';
 
+// Raw cells for pasting inside the app, plus tab separated text for Excel etc.
 export function buildClipboardData(cells, results, range) {
   const block = [];
   const lines = [];
@@ -24,6 +25,7 @@ export function buildClipboardData(cells, results, range) {
   };
 }
 
+// Text copied from outside -> block of cells (rows by newline, columns by tab)
 export function parseClipboardText(text) {
   const lines = normalizeLineEndings(text).replace(/\n$/, '').split('\n');
   const rows = lines.map((line) => line.split('\t'));
@@ -34,6 +36,7 @@ export function parseClipboardText(text) {
   );
 }
 
+// Used to check if the system clipboard still has what we copied
 export function isSameClipboardText(a, b) {
   return normalizeLineEndings(a).trimEnd() === normalizeLineEndings(b).trimEnd();
 }

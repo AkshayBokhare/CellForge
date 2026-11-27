@@ -41,11 +41,13 @@ function Spreadsheet() {
   const activeId = cellId(selection.anchor.row, selection.anchor.col);
   const activeCell = cells[activeId];
 
+  // Recalculate all formulas whenever any cell changes
   const results = useMemo(
     () => evaluateSheet(cells, { rowCount, colCount }),
     [cells, rowCount, colCount]
   );
 
+  // Sum / average / count for the status bar
   const selectionStats = useMemo(() => {
     const numbers = selectedIds.map((id) => toNumber(results[id])).filter((n) => n !== null);
     const sum = numbers.reduce((total, n) => total + n, 0);
@@ -70,6 +72,7 @@ function Spreadsheet() {
     gridRef.current?.focus({ preventScroll: true });
   }, []);
 
+  // Keep the focused cell visible when moving with the keyboard
   useEffect(() => {
     if (skipScrollRef.current) {
       skipScrollRef.current = false;
@@ -80,6 +83,7 @@ function Spreadsheet() {
     element?.scrollIntoView?.({ block: 'nearest', inline: 'nearest' });
   }, [selection.focus]);
 
+  // Mouse can be released outside the grid, so listen on window
   useEffect(() => {
     const stopDragging = () => {
       isDraggingRef.current = false;
@@ -118,6 +122,7 @@ function Spreadsheet() {
     [rowCount]
   );
 
+  // Ref keeps the latest draft for handlers that run before the next render
   const changeEditing = useCallback((next) => {
     editingRef.current = next;
     setEditing(next);
@@ -202,6 +207,7 @@ function Spreadsheet() {
     [startEditing]
   );
 
+  // Same handler objects every render so memo'd cells don't re-render
   const cellHandlers = useMemo(
     () => ({
       onMouseDown: handleCellMouseDown,
@@ -278,6 +284,7 @@ function Spreadsheet() {
     [range, showNotice]
   );
 
+  // Hook into the browser copy/cut/paste events, only while the grid has focus
   useEffect(() => {
     const gridHasFocus = () => document.activeElement === gridRef.current;
 
@@ -292,6 +299,7 @@ function Spreadsheet() {
       event.preventDefault();
       event.clipboardData.setData('text/plain', copySelection());
 
+      // No origin means formulas are not shifted when pasting a cut
       clipboardRef.current.origin = null;
       dispatch({ type: 'CLEAR_CELLS', ids: selectedIds, keepFormatting: false });
     };
@@ -303,6 +311,7 @@ function Spreadsheet() {
       const text = event.clipboardData.getData('text/plain');
       const copied = clipboardRef.current;
 
+      // Our own copy keeps formulas and formatting, otherwise paste as plain text
       if (copied && (!text || isSameClipboardText(text, copied.text))) {
         pasteBlock(copied.block, copied.origin);
       } else if (text) {
@@ -322,8 +331,8 @@ function Spreadsheet() {
 
   const handleCopyButton = () => {
     const text = copySelection();
-    navigator.clipboard?.writeText(text).catch(() => {
-    });
+    // The in-app copy still works if the browser blocks clipboard access.
+    navigator.clipboard?.writeText(text).catch(() => {});
     focusGrid();
   };
 
@@ -371,7 +380,7 @@ function Spreadsheet() {
         dispatch({ type: 'CLEAR_CELLS', ids: selectedIds, keepFormatting: true });
         break;
       default:
-
+        // Typing a printable key starts editing with that character.
         if (key.length === 1 && !event.altKey) {
           event.preventDefault();
           startEditing(activeId, key);
