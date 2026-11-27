@@ -1,0 +1,68 @@
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.app__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  padding: 10px 20px;
+  background: var(--color-brand);
+  color: #fff;
+}
+
+.app__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.app__logo {
+  width: 22px;
+  height: 22px;
+  border-radius: 5px;
+  background:
+    linear-gradient(#fff, #fff) 7px 0 / 2px 100% no-repeat,
+    linear-gradient(#fff, #fff) 14px 0 / 2px 100% no-repeat,
+    linear-gradient(#fff, #fff) 0 7px / 100% 2px no-repeat,
+    linear-gradient(#fff, #fff) 0 14px / 100% 2px no-repeat,
+    rgba(255, 255, 255, 0.25);
+}
+
+.app__name {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+.app__tagline {
+  margin: 0;
+  font-size: 13px;
+  opacity: 0.9;
+}
+
+.app__tagline code {
+  margin-left: 4px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.15);
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+.app__main {
+  flex: 1;
+  min-height: 0;
+  padding: 16px 20px 20px;
+}
+
+@media (max-width: 600px) {
+  .app__main {
+    padding: 8px;
+  }
+}

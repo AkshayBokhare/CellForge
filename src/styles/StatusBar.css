@@ -1,0 +1,35 @@
+.status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 32px;
+  padding: 0 12px;
+  border-top: 1px solid var(--color-border);
+  background: #fafbfc;
+  color: var(--color-muted);
+  font-size: 12px;
+}
+
+.status-bar__stats {
+  display: flex;
+  gap: 16px;
+}
+
+.status-bar__stats strong {
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.status-bar__notice {
+  text-align: right;
+}
+
+.status-bar__notice--info {
+  color: var(--color-brand);
+}
+
+.status-bar__notice--error {
+  color: var(--color-error);
+  font-weight: 600;
+}
